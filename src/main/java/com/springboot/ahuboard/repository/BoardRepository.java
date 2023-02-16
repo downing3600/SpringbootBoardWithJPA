@@ -12,6 +12,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
 	
 	
 	//목록 최신순(번호 내림차순)
-	List<Board> findAllByOrderNoDesc();
+//	List<Board> findAllByOrderNoDesc();
 
 }

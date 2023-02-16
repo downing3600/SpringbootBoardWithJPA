@@ -26,8 +26,8 @@ public class BoardController {
 	
 	@GetMapping("/")
 	public String list(Model model) {
-//		model.addAttribute("list", boardRepository.findAll());
-		model.addAttribute("list", boardRepository.findAllByOrderNoDesc());
+		model.addAttribute("list", boardRepository.findAll());
+//		model.addAttribute("list", boardRepository.findAllByOrderNoDesc());
 		
 //		for(Board board : boardRepository.findAll()) {
 //			log.info(String.valueOf(board.getNo()));
