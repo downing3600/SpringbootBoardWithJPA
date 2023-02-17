@@ -6,16 +6,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import com.springboot.ahuboard.board.vo.BoardPaginationVO;
+import com.springboot.ahuboard.board.vo.BoardVO;
 import com.springboot.ahuboard.entity.Board;
 import com.springboot.ahuboard.repository.BoardRepository;
 
@@ -29,17 +37,17 @@ public class BoardController {
 	@Autowired
 	private BoardRepository boardRepository;
 	
-	@GetMapping("/")
-	public String list(Model model) {
-		model.addAttribute("list", boardRepository.findAll());
-//		model.addAttribute("list", boardRepository.findAllByOrderNoDesc());
+	@RequestMapping("/")
+	public String list(Model model,
+						@ModelAttribute BoardVO boardVO,
+						@PageableDefault(page = 0, size=10)
+						@SortDefault(sort="no", direction = Sort.Direction.DESC)
+						Pageable pageable) {
 		
-//		for(Board board : boardRepository.findAll()) {
-//			log.info(String.valueOf(board.getNo()));
-//			log.info(String.valueOf(board.getWriter()));
-//			log.info(String.valueOf(board.getTitle()));
-//		}
+		Page<Board> data = boardRepository.findAll(boardVO.specification(), pageable);
 		
+		model.addAttribute("data", data);
+		model.addAttribute("pagination",new BoardPaginationVO(data));
 		
 		return "list";
 	}
