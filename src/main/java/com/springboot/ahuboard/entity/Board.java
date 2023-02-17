@@ -38,6 +38,9 @@ public class Board {
 	private String content;
 	
 	@Column
+	private String password;
+	
+	@Column
 	private int readcount;
 	
 	@CreationTimestamp

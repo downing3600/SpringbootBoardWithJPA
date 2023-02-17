@@ -41,12 +41,24 @@
 				<textarea class="form-control" name="content" placeholder="내용 작성" rows="15" required>${board.content }</textarea>
 			</div>
 		</div>
+		
+		<!-- 비밀번호 수정을 위한 탭 제공 -->
+		<div class="row mt-4">
+			<div class="col-md-10 offset-md-1">
+				<div class="form-floating">
+					<input class="form-control" type="password" name="password" placeholder="비밀번호" required>
+					<label class="form-label text-secondary">비밀번호</label>
+				</div>
+			</div>
+		</div>
+		
 		<div class="row mt-4">
 			<div class="col-md-10 offset-md-1 text-end">
 				<a href="./" class="btn btn-secondary">목록</a>
 				<button type="submit" class="btn btn-primary">수정</button>
 			</div>
 		</div>
+		
 	
 	</form>
 </div>
