@@ -25,7 +25,7 @@ public class BoardVO {
 //				(title != null && !title.isEmpty()) || (content != null && !content.isEmpty()) ||
 //				(begin != null && !begin.isEmpty()) || (end != null && end.isEmpty());
 		
-		return EmptyChecker.isEmpty(no, writer, title, content, begin, end);
+		return !EmptyChecker.isEmpty(no, writer, title, content, begin, end);
 	}
 	
 	public boolean isSexy( ) {

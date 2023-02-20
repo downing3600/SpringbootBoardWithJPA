@@ -20,7 +20,7 @@ public class EmptyChecker {
 			String s = (String)obj;
 			return s.isEmpty();
 		}
-		return false;
+		return true;
 	}
 
 	public static boolean isEmpty(Object ... args) {
