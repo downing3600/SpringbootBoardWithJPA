@@ -48,6 +48,13 @@ public class Board {
 	
 	@UpdateTimestamp
 	private Date editTime;
+
+	//계층형 게시판을 위한 상태값
+	@Column
+	private Long grp;
+
+	@Column
+	private long seq, dep; // 여기서 wrapper? 형 클래스를 안써서 초기값을 null이 아닌 0으로 받은듯 하다
 	
 	
 	

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.springboot.ahuboard.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,12 +37,20 @@ public class BoardController {
 	
 	@Autowired
 	private BoardRepository boardRepository;
-	
+
+	@Autowired
+	private BoardService boardService;
+
+	//llist의 정렬 순서를 grp와 seq에 의해 처리되도록 변경
 	@RequestMapping("/")
 	public String list(Model model,
-						@ModelAttribute BoardVO boardVO,
-						@PageableDefault(page = 0, size=10)
-						@SortDefault(sort="no", direction = Sort.Direction.ASC)
+					   @ModelAttribute BoardVO boardVO,
+					   @PageableDefault(page = 0, size=10)
+//						@SortDefault(sort="no", direction = Sort.Direction.ASC)
+						@SortDefault.SortDefaults({ //여러개의 정렬 옵션일때 설정 하는 방법
+								@SortDefault(sort="grp", direction = Sort.Direction.DESC),
+								@SortDefault(sort="seq", direction = Sort.Direction.ASC)
+						})
 						Pageable pageable) {
 		
 		Page<Board> data = boardRepository.findAll(boardVO.specification(), pageable);
@@ -54,28 +63,16 @@ public class BoardController {
 	
 	@GetMapping("/write")
 	public String write() {
+
 		return "write";
 	}
 	
 	@PostMapping("/write")
-	public String wrtie(@ModelAttribute Board board) {
-		Board result = boardRepository.save(board);
-		String resultStr = String.valueOf(result);
-		
-		log.info("리설트 스트링 값 확인" + resultStr);
-//		
-//		if(board != null) {
-//			log.info(String.valueOf(board.getNo()));
-//			log.info(String.valueOf(board.getTitle()));
-//			log.info(String.valueOf(board.getContent()));
-//			log.info(String.valueOf(board.getWriter()));
-//		}
-		
-//		return "redirect:/list";
+	public String write(@ModelAttribute Board board) {
+		Board result = boardService.write(board);
 		return "redirect:/detail?no="+result.getNo();
-		
 	}
-	
+
 	@GetMapping("/detail")
 	public String detail(@RequestParam long no, Model model) {
 		Board board = boardRepository.findById(no).orElseThrow();
@@ -124,21 +121,32 @@ public class BoardController {
 	}
 	
 	//비밀번호 로직이 추가되었으므로 단순하게 번호를 받는 것이 아닌 FlashMap을 수신하는 코드로 변경
+	//(+추가) 답글이 달린 글은 삭제가 불가능 하도록 처리(삭제 처리하려면 decreaseSequnce 호출)
 	@GetMapping("/delete")
 	public String delete(HttpServletRequest request, RedirectAttributes attr) {
 		Map<String, ?> map = RequestContextUtils.getInputFlashMap(request);
 		if(map == null) throw new RuntimeException("권한 없음");
-		
 		Long no = (Long) map.get("no");
+
+		long count = boardRepository.countByGrp(no);
+		if(count > 1) {
+			return "redirect:/delete_error";
+		}
 		boardRepository.deleteById(no);
 		return "redirect:/";
 	}
-	
+
+	@GetMapping("delete_error")
+	public String deleteError(){
+		return "deleteError";
+	}
+
 	//비밀번호 검사 매핑 추가
 	//- /passwrd/모드/번호
 	//- 모드는 반드시 edit 또는 delete 중 하나가 오도록 정규식 검사 처리
 	@GetMapping("/password/{mode:edit|delete}/{no}")
-	public String password(@PathVariable String mode,@PathVariable long no, Model model) {
+	public String password(@PathVariable String mode, @PathVariable long no, Model model) {
+
 		model.addAttribute("mode", mode);
 		model.addAttribute("no", no);
 		return "password";

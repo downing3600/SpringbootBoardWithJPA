@@ -18,6 +18,7 @@ import lombok.Data;
 public class BoardVO {
 	private Long no;
 	private String writer, title, content, begin, end;
+//	private Long grp, seq, dep;
 	
 //검색 여부 판정
 	public boolean isSearch() {

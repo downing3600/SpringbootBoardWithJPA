@@ -42,8 +42,10 @@
 	<!-- 버튼 영역 -->
 	<div class="row mt-4">
 		<div class="col-md-10 offset-md-1 text-end">
+
+			<!--글쓰기와 다르게 답글쓰기는 계산을 위해 원본글의 번호를 전달해야함 -->
 			<a href="write" class="btn btn-primary">글쓰기</a>
-			<a href="write" class="btn btn-success">답글쓰기</a>
+			<a href="write?no=${board.no}" class="btn btn-success">답글쓰기</a>
 			
 			<!-- 수정과 삭제가 비밀번호를 입력하는 창으로 이동 할 수 있도록 링크 수정
 			     주소는 /password/edit 또는 delete/번호 형태로 경로 변수 처리 -->
