@@ -1,11 +1,11 @@
 package com.springboot.ahuboard.controller;
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.springboot.ahuboard.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +27,7 @@ import com.springboot.ahuboard.board.vo.BoardPaginationVO;
 import com.springboot.ahuboard.board.vo.BoardVO;
 import com.springboot.ahuboard.entity.Board;
 import com.springboot.ahuboard.repository.BoardRepository;
+import com.springboot.ahuboard.service.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,9 +68,11 @@ public class BoardController {
 		return "write";
 	}
 	
+	
+	//(+추가) 게시글 등록 시 이미지 번호를 받아서 같이 처리하도록 변경
 	@PostMapping("/write")
-	public String write(@ModelAttribute Board board) {
-		Board result = boardService.write(board);
+	public String write(@ModelAttribute Board board, @RequestParam List<Long> images) {
+		Board result = boardService.write(board, images);
 		return "redirect:/detail?no="+result.getNo();
 	}
 

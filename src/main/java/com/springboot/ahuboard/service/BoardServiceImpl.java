@@ -1,17 +1,29 @@
 package com.springboot.ahuboard.service;
 
-import com.springboot.ahuboard.entity.Board;
-import com.springboot.ahuboard.repository.BoardRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.ahuboard.entity.Board;
+import com.springboot.ahuboard.properties.BoardFileProperties;
+import com.springboot.ahuboard.repository.BoardFileRepository;
+import com.springboot.ahuboard.repository.BoardRepository;
+
 @Service
 public class BoardServiceImpl implements BoardService{
+	
+	@Autowired
+	private BoardFileProperties boardFileProperties;
+	
+	@Autowired
+	private BoardFileRepository boardFileRepository;
+	
 
     @Autowired
     private BoardRepository boardRepository;
     @Override
-    public Board write(Board board) {
+    public Board write(Board board, List<Long> images) {
 
         //새글일 경우와 답글일 경우를 구분하여 처리(board.no가 존재 할 경우로 새글, 답글을 분기한다.)
         //-새글일 경우 - 등록후 grp를 번호와 동일하게 갱신

@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <form method="post">
+    <form method="post" class="board-form">
 
         <c:if test="${param.no != null}">
             <input type="hidden" name="no" value="${param.no}">

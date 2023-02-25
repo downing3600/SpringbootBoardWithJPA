@@ -19,6 +19,80 @@
     		height:50px;
     	}
     </style>
+
+	
+	<!-- JQuery dependency : slim에는 ajax기능이 없다.-->    
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    
+    <!-- summernote dependency -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    
+    <script>
+    	$(function(){
+    		//summernote 생성
+    		//- .board-form 안에 있는 [name=content]에 설정
+    		$(".board-form").find("[name=content]").summernote({
+    			height:300,//기본 높이
+    			minHeight:300,//최소 높이
+    			callbacks: {
+    			    onImageUpload: function(files) {
+    			      // 파일(files)을 서버에 업로드 하는 코드
+    			      
+    			      if(!files || files.length == 0) return; // 없으면 차단
+    			      
+    			      //첨부를 위한 FormData 객체 생성
+    			      const formData = new FormData();
+    			      //파일 개수만큼 append(이름은 반드시 files... 서버에 써있음)
+    			      for( let i=0; i <files.length; i++){
+    			    	  formData.append("files", files[i]);
+    			      }
+    			      
+    			      //ajax 요청
+    			      //- multipart 요청이므로 processData와 contentType 처리가 필요
+    			      $.ajax({
+    			    	  url:"${pageContext.request.contextPath}/rest/image",
+    			    	  method:"post",
+    			    	  data:formData,
+    			    	  processData:false,
+    			    	  contentType:false,
+    			    	  success:function(resp){
+    			    		  //console.log("업로드 성공", resp)//테스트
+    			    		  
+    			    		  //성공 시 서버에는 Map<String, List>형태가 반환됨
+    			    		  //내부에는 두 개의 List가 존재
+    			    		  //- urls : 이미지 링크 주소 (이미지 태그 생성 후 서머노트에 추가)
+    			    		  //- numbers : 이미지 번호 (form에 hidden으로 첨부)
+    			    		  
+    			    		  
+    			    		  const {urls, numbers} = resp;
+    			    		  //console.log("resp", resp);
+    			    		  for(let i=0; i < urls.length; i++){
+    			    			  var image = $("<img>").attr("src",urls[i]);
+    			   					$(".board-form").find("[name=content]").summernote('insertNode', image[0]);
+    			    			  
+    			    		  }
+    			    		  
+    			    		  for(let i=0; i < numbers.length; i++){
+    			    			  $("<input>").attr("type", "hidden").attr("name", "images").val(numbers[i]).prependTo(".board-form");
+    			    			  
+    			    		  }
+    			    	  }
+    			      });
+    			      
+    			      
+    			      
+    			      /* $summernote.summernote('insertNode', imgNode); */
+    			    }
+    			  }
+    			
+    		});
+    		
+    	});
+    
+    </script>
+    
     
   </head>
   <body>
