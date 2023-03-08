@@ -33,7 +33,10 @@
     	$(function(){
     		//summernote 생성
     		//- .board-form 안에 있는 [name=content]에 설정
-    		$(".board-form").find("[name=content]").summernote({
+    		var $summernote = $(".board-form").find("[name=content]");
+    		if($summernote.length == 0) return;
+    		$summernote.summernote({
+    		/* $(".board-form").find("[name=content]").summernote({ */
     			height:300,//기본 높이
     			minHeight:300,//최소 높이
     			callbacks: {
@@ -84,7 +87,38 @@
     			      
     			      
     			      /* $summernote.summernote('insertNode', imgNode); */
-    			    }
+    			    },
+    			    onMediaDelete:function(files){
+    			    	console.log(files);//확인(삭제한 태그가 배열로 들어옴)
+    			    	if(!files || files.length == 0) return; // 없으면 차단
+    			    	
+    			    	//서버 이미지 주소는 - http://호스트:포트/board/rest/image/번호
+    			    	//따라서 마지막 슬래시(/)를 찾아서 잘라내면 번호를 알 수 있다.
+    			    	const formData = new FormData();
+    			    	
+    			    	for(let i=0; i < files.length; i ++){
+    			    		const src = $(files[i]).attr("src"); //img태그 src 추출
+    			    		const idx = src.lastIndexOf("/");// 우측 슬래시 탐색
+    			    		formData.append("numbers", src.substring(idx+1));// 슬래시 바로 다음을 추출
+    			    	}
+    			    	
+    			    	//ajax 삭제 요청
+    			    	$.ajax({
+    			    		url:"${pageContext.request.contextPath}/rest/image/delete",
+    			    		method:"post",//post로 해야 formData를 전송 할 수 있음
+    			    		data:formData,
+    			    		processData:false,
+    			    		contentType:false,
+    			    		success:function(resp){
+    			    			console.log(resp);//확인용
+    			    			
+    			    			for(let i=0; i <resp.length; i++){ // 전달 받음 number로 이루어진 히든 태그를 삭제하는 과정
+    			    				$("input[type=hidden][name=images][value="+resp[i]+"]").remove();
+    			    			}
+    			    		}
+    			    		
+    			    	});
+    			    },
     			  }
     			
     		});

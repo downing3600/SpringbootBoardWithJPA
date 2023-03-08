@@ -108,6 +108,22 @@ public class BoardFileController {
 								.body(resource);
 		
 	}
-//	@PostMapping("/image/delete")//삭제
+	
+	@PostMapping("/image/delete")//삭제
+	public List<Long> delete(@RequestParam List<Long> numbers){
+		//반복하여 삭제
+		File dir = boardFileProperties.getImagePath();
+		if(numbers != null && !numbers.isEmpty()) {
+			for(Long seq : numbers) {
+				BoardFile boardFile = boardFileRepository.findById(seq).orElseThrow();
+				//실물 삭제
+				File target = new File(dir, String.valueOf(seq));
+				target.delete();
+				//DB 삭제
+				boardFileRepository.delete(boardFile);
+			}
+		}
+		return numbers;
+	}
 
 }

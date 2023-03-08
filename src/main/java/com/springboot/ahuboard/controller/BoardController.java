@@ -26,6 +26,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import com.springboot.ahuboard.board.vo.BoardPaginationVO;
 import com.springboot.ahuboard.board.vo.BoardVO;
 import com.springboot.ahuboard.entity.Board;
+import com.springboot.ahuboard.entity.BoardFile;
 import com.springboot.ahuboard.repository.BoardRepository;
 import com.springboot.ahuboard.service.BoardService;
 
@@ -71,7 +72,7 @@ public class BoardController {
 	
 	//(+추가) 게시글 등록 시 이미지 번호를 받아서 같이 처리하도록 변경
 	@PostMapping("/write")
-	public String write(@ModelAttribute Board board, @RequestParam List<Long> images) {
+	public String write(@ModelAttribute Board board, @RequestParam(required = false) List<Long> images) {
 		Board result = boardService.write(board, images);
 		return "redirect:/detail?no="+result.getNo();
 	}
@@ -104,27 +105,15 @@ public class BoardController {
 	
 //	@PatchMapping("/edit")
 	@PostMapping("/edit")
-	public String edit(@ModelAttribute Board board, RedirectAttributes attr, Model model) {
-		Board origin = boardRepository.findById(board.getNo()).orElseThrow();
-		origin.setTitle(board.getTitle());
-		origin.setWriter(board.getWriter());
-		origin.setContent(board.getContent());
-		//비밀번호 변경 추가
-		origin.setPassword(board.getPassword());
-		
-		Board result = boardRepository.save(origin);
-//		model.addAttribute("no",result.getNo());
-		attr.addAttribute("no", result.getNo());
-		attr.addAttribute("title", result.getTitle());
-		attr.addAttribute("writer", result.getWriter());
-//		attr.addFlashAttribute("no", result.getNo());
-		
-//		return "redirect:detail?no="+result.getNo();
+	public String edit(@ModelAttribute Board board,@RequestParam(required=false) List<Long> images, RedirectAttributes attr, Model model) {
+		boardService.edit(board, images);
+		attr.addAttribute("no", board.getNo());
 		return "redirect:detail";
 	}
 	
 	//비밀번호 로직이 추가되었으므로 단순하게 번호를 받는 것이 아닌 FlashMap을 수신하는 코드로 변경
 	//(+추가) 답글이 달린 글은 삭제가 불가능 하도록 처리(삭제 처리하려면 decreaseSequnce 호출)
+	//(+추가) 이제부터는 글이 지워지면 딸린 이미지도 지워져야 함(실물 파일을 지워야 하므로 수동으로 한다)
 	@GetMapping("/delete")
 	public String delete(HttpServletRequest request, RedirectAttributes attr) {
 		Map<String, ?> map = RequestContextUtils.getInputFlashMap(request);
@@ -135,7 +124,7 @@ public class BoardController {
 		if(count > 1) {
 			return "redirect:/delete_error";
 		}
-		boardRepository.deleteById(no);
+		boardService.delete(no);
 		return "redirect:/";
 	}
 
