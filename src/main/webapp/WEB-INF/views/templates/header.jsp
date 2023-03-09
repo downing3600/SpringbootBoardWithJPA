@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- header -->
 
@@ -166,6 +167,10 @@
 	          </div>
 	        </li>
 	      </ul>
+	      <c:if test="${!pageContext.request.servletPath eq '/login'}">
+	      <a class="btn btn-primary ms-1" href="${pageContext.request.contextPath}/member/login">로그인</a>
+	      </c:if>
+	      <a class="btn btn-warning ms-1 me-1" href="${pageContext.request.contextPath}/member/sign">회원가입</a>
 	      <form class="d-flex">
 	        <input class="form-control me-sm-2" type="search" placeholder="Search">
 	        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
@@ -173,7 +178,14 @@
 	    </div>
 	  </div>
 	</nav>
-
+	<h1>${pageContext.request.servletPath}</h1>
+	<h1>${pageContext.request.requestURL}</h1>
+	<h1>${pageContext.request.scheme}</h1>
+	<h1>${pageContext.request.serverName}</h1>
+	<h1>${pageContext.request.serverPort}</h1>
+	<h1>${pageContext.request.requestURI}</h1>
+	<h1>${pageContext.request.contextPath}</h1>
+	
 	<div class="empty-space">
 	</div>
 	<div class="empty-space">
