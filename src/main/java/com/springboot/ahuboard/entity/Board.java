@@ -56,6 +56,11 @@ public class Board {
 	@Column
 	private long seq, dep; // 여기서 wrapper? 형 클래스를 안써서 초기값을 null이 아닌 0으로 받은듯 하다
 	
+	//댓글 개수 확인용 컬럼
+	//-조인을 해도 셀 수 있지만 성능상의 이점을 가지기 위해 별도의 컬럼을 설정
+	@Column
+	private long replyCount;
+	
 	
 	
 
